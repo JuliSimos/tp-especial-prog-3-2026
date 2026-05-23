@@ -9,6 +9,8 @@ public class TestServicios {
         System.out.println("No existe P999: " + servicios.servicio1("P999"));
 
         System.out.println("\n--- SERVICIO 2 ---");
+        System.out.println("Paquetes con alimentos: " + servicios.servicio2(true));
+        System.out.println("Paquetes sin alimentos: " + servicios.servicio2(false));
 
         System.out.println("\n--- SERVICIO 3 ---");
     }

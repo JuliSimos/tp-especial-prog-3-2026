@@ -19,7 +19,7 @@ public class TestPaquetes {
                     p.getIdPaquete(),
                     p.getCodigo(),
                     p.getNivelUrgencia(),
-                    (p.getContieneAlimentos() ? "Sí" : "No"),
+                    (p.isContieneAlimentos() ? "Sí" : "No"),
                     p.getPeso()
             );
         }

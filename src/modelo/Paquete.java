@@ -19,7 +19,7 @@ public class Paquete {
         return codigo;
     }
 
-    public boolean getContieneAlimentos() {
+    public boolean isContieneAlimentos() {
         return contieneAlimentos;
     }
 

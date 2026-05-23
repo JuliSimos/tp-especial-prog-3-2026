@@ -5,17 +5,26 @@ import modelo.Paquete;
 import persistencia.LectorDeCamiones;
 import persistencia.LectorDePaquetes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 //Completar con las estructuras y métodos privados que se
 //requieran.
 public class Servicios {
-    private HashMap<String,Paquete> paquetes;
-    private HashMap<String,Camion> camiones;
+
+    private HashMap<String, Paquete> paquetes;
+    private HashMap<String, Camion> camiones;
+
+    // Estructuras auxiliares para resolver el servicio 2
+    private List<Paquete> paquetesConAlimentos;
+    private List<Paquete> paquetesSinAlimentos;
+
     /**
-     * Actualmente la complejidad es lineal O(N + M). Porque se realiza una única lectura secuencial de ambos archivos de texto,
-     *  e insertar cada elemento en los HashMap principales tiene un costo promedio constante de O(1)
+     * La complejidad es lineal O(N + M).
+     * Porque se leen secuencialmente ambos archivos
+     * y luego se recorren los M paquetes del HashMap. Insertar en el mapa y agregar
+     * al ArrayList toma tiempo constante O(1).
      */
     public Servicios(String pathCamiones, String pathPaquetes) {
         LectorDePaquetes lectorPaquetes = new LectorDePaquetes();
@@ -23,21 +32,42 @@ public class Servicios {
 
         this.paquetes = lectorPaquetes.cargar(pathPaquetes);
         this.camiones = lectorCamiones.cargar(pathCamiones);
+
+        this.paquetesConAlimentos = new ArrayList<>();
+        this.paquetesSinAlimentos = new ArrayList<>();
+
+        //Carga de listas auxiliares
+        for (Paquete paquete : this.paquetes.values()) {
+            if (paquete.isContieneAlimentos()) {
+                this.paquetesConAlimentos.add(paquete);
+            } else {
+                this.paquetesSinAlimentos.add(paquete);
+            }
+        }
+
     }
 
 
-    /** Complejidad promedio O(1).
-     * El HashMap usa una función hash para obtener el paquete por su clave, lo que toma tiempo constante en promedio.
+    /**
+     * Complejidad promedio O(1).
+     * El HashMap usa una función hash para obtener el paquete por su clave, lo que toma tiempo constante en promedio
      */
     public Paquete servicio1(String codigoPaquete) {
         return paquetes.get(codigoPaquete);
     }
 
-    /*
-     * Expresar la complejidad temporal del servicio 2.
+    /**
+     * Complejidad de tiempo constante O(1).
+     * El método solo evalúa la condición
+     * y retorna la referencia de la lista precalculada, sin recorrer los paquetes
      */
     public List<Paquete> servicio2(boolean contieneAlimentos) {
-        return null;
+        if (contieneAlimentos) {
+            return paquetesConAlimentos;
+        } else {
+            return paquetesSinAlimentos;
+        }
+
     }
 
 
