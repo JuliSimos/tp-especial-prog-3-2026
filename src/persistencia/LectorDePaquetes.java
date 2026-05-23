@@ -3,17 +3,18 @@ package persistencia;
 import modelo.Paquete;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LectorDePaquetes {
-    private static final String RUTA_ARCHIVOS =
-            "src/persistencia/archivos/";
-
-    public List<Paquete> cargar(String nombreArchivo) {
+    private static final String RUTA_ARCHIVOS = "src/persistencia/archivos/";
+    /**Controla que no haya códigos repetidos en el archivo con putIfAbsent y comprobando cantidadEsperada con cantidadCargados
+ */
+    public HashMap<String, Paquete> cargar(String nombreArchivo) {
         String rutaCompleta = RUTA_ARCHIVOS + nombreArchivo;
 
-        LectorCSV reader = new LectorCSV();
-        List<String[]> datos = reader.leerArchivo(rutaCompleta);
+        LectorCSV lector = new LectorCSV();
+        List<String[]> datos = lector.leerArchivo(rutaCompleta);
 
         if(datos.isEmpty()) {
             throw new RuntimeException("Archivo vacío");
@@ -21,7 +22,7 @@ public class LectorDePaquetes {
 
         int cantidadEsperada = Integer.parseInt(datos.get(0)[0]);
 
-        List<Paquete> paquetes = new ArrayList<>();
+        HashMap<String, Paquete> paquetesMap = new HashMap<>();
 
         for (int i = 1; i < datos.size(); i++) {
 
@@ -33,20 +34,18 @@ public class LectorDePaquetes {
             boolean contieneAlimentos = Integer.parseInt(fila[3]) == 1;
             int nivelUrgencia = Integer.parseInt(fila[4]);
 
-            paquetes.add(
-                    new Paquete(id, codigo, peso, contieneAlimentos, nivelUrgencia)
-            );
+            paquetesMap.putIfAbsent(codigo, new Paquete(id, codigo, peso, contieneAlimentos, nivelUrgencia));
         }
 
-        if (paquetes.size() != cantidadEsperada) {
+        if (paquetesMap.size() != cantidadEsperada) {
             throw new RuntimeException(
-                    "Cantidad de camiones inválida. Esperados: "
+                    "Cantidad de paquetes inválida. Esperados: "
                             + cantidadEsperada +
                             ", leídos: "
-                            + paquetes.size()
+                            + paquetesMap.size()
             );
         }
 
-        return paquetes;
+        return paquetesMap;
     }
 }

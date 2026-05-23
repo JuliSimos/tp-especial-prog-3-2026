@@ -28,7 +28,7 @@ public class Camion {
     }
 
 
-    public boolean getRefrigerado() {
+    public boolean isRefrigerado() {
         return refrigerado;
     }
 
