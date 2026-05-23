@@ -42,4 +42,4 @@ src/
 **Requerimiento:** Dados dos valores enteros (mínimo y máximo), retornar todos los paquetes cuyo nivel de urgencia se encuentre dentro de ese rango (inclusive).
 
 - **Decisión de diseño:** Para resolver búsquedas por rango de manera eficiente, se optó por estructurar los paquetes en un **Árbol Binario de Búsqueda (ABB)** ordenado por el nivel de urgencia. Al igual que en el Servicio 2, este árbol se poblará una sola vez durante la inicialización en el constructor para evitar la sobrecarga de reconstruirlo en cada consulta.
-- **Justificación:** El ABB es la estructura ideal para consultas de rangos. Para garantizar un rendimiento óptimo y evitar que el árbol se desbalancee (lo que degradaría la complejidad a lineal en el peor de los casos), se analizará la estrategia de carga de los datos o el uso de un árbol auto-balanceable, asegurando así un costo de búsqueda eficiente.
+- **Justificación:** El ABB es la estructura ideal para consultas de rangos.
