@@ -17,8 +17,12 @@ public class Servicios {
     private List<Paquete> paquetesConAlimentos;
     private List<Paquete> paquetesSinAlimentos;
 
+    //Estrcturas auxiliares para resolver parte 2
+    private List<Camion> camionesConRefrigeracion;
+    private List<Camion> camionesSinRefrigeracion;
+
     //Estructuar auxiliar para resolver el servicio 3
-    TreeMap<Integer, List<Paquete>> arbolDeUrgencias;
+    private TreeMap<Integer, List<Paquete>> arbolDeUrgencias;
 
 
     /**
@@ -27,6 +31,8 @@ public class Servicios {
      *
      * Camiones:
      * La lectura y carga de los M camiones requiere O(M).
+     * Luego, se recorren una vez para clasificarlos en las listas
+     * de camiones con y sin refrigeración, lo que requiere O(M).
      *
      * Paquetes:
      * La lectura y carga de los N paquetes requiere O(N).
@@ -45,7 +51,13 @@ public class Servicios {
         this.paquetesConAlimentos = new ArrayList<>();
         this.paquetesSinAlimentos = new ArrayList<>();
 
+        this.camionesConRefrigeracion = new ArrayList<>();
+        this.camionesSinRefrigeracion = new ArrayList<>();
+
+        this.arbolDeUrgencias = new TreeMap<>();
+
         //Carga de listas auxiliares
+
         for (Paquete paquete : this.paquetes.values()) {
             if (paquete.isContieneAlimentos()) {
                 this.paquetesConAlimentos.add(paquete);
@@ -54,14 +66,18 @@ public class Servicios {
             }
         }
 
-        this.arbolDeUrgencias = new TreeMap<>();
+        for (Camion camion : this.camiones.values()) {
+            if (camion.isRefrigerado()){
+                this.camionesConRefrigeracion.add(camion);
+            }else {
+                this.camionesSinRefrigeracion.add(camion);
+            }
+        }
+
         for (Paquete paquete : this.paquetes.values()) {
             // Si no existe la lista para esa urgencia, la crea.
             arbolDeUrgencias.computeIfAbsent(paquete.getNivelUrgencia(), k -> new ArrayList<>()).add(paquete);
         }
-
-
-
     }
 
 
