@@ -5,12 +5,9 @@ import modelo.Paquete;
 import persistencia.LectorDeCamiones;
 import persistencia.LectorDePaquetes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-//Completar con las estructuras y métodos privados que se
-//requieran.
+//Completar con las estructuras y métodos privados que se requieran.
 public class Servicios {
 
     private HashMap<String, Paquete> paquetes;
@@ -20,11 +17,23 @@ public class Servicios {
     private List<Paquete> paquetesConAlimentos;
     private List<Paquete> paquetesSinAlimentos;
 
+    //Estructuar auxiliar para resolver el servicio 3
+    TreeMap<Integer, List<Paquete>> arbolDeUrgencias;
+
+
     /**
-     * La complejidad es lineal O(N + M).
-     * Porque se leen secuencialmente ambos archivos
-     * y luego se recorren los M paquetes del HashMap. Insertar en el mapa y agregar
-     * al ArrayList toma tiempo constante O(1).
+     * Complejidad temporal O(N log N + M).
+     * Donde N es la cantidad de paquetes y M la cantidad de camiones.
+     *
+     * Camiones:
+     * La lectura y carga de los M camiones requiere O(M).
+     *
+     * Paquetes:
+     * La lectura y carga de los N paquetes requiere O(N).
+     * Luego, se recorren para construir las estructuras auxiliares:
+     * agregarlos a las listas toma O(1) por paquete,
+     * mientras que insertarlos en el TreeMap toma O(log N) por operación.
+     * En total, el procesamiento e indexación de paquetes requiere O(N log N).
      */
     public Servicios(String pathCamiones, String pathPaquetes) {
         LectorDePaquetes lectorPaquetes = new LectorDePaquetes();
@@ -44,6 +53,14 @@ public class Servicios {
                 this.paquetesSinAlimentos.add(paquete);
             }
         }
+
+        this.arbolDeUrgencias = new TreeMap<>();
+        for (Paquete paquete : this.paquetes.values()) {
+            // Si no existe la lista para esa urgencia, la crea.
+            arbolDeUrgencias.computeIfAbsent(paquete.getNivelUrgencia(), k -> new ArrayList<>()).add(paquete);
+        }
+
+
 
     }
 
@@ -71,10 +88,21 @@ public class Servicios {
     }
 
 
-    /*
-     * Expresar la complejidad temporal del servicio 3.
+    /**
+     * Complejidad temporal O(log N + K).
+     * Donde N es la cantidad de niveles de urgencia almacenados y K la cantidad
+     * de paquetes recuperados.
+     * La obtención del submapa correspondiente al rango solicitado toma O(log N)
+     * y la construcción del resultado requiere recorrer los K paquetes encontrados.
      */
     public List<Paquete> servicio3(int urgenciaMinima, int urgenciaMaxima) {
-        return null;
+        List<Paquete> paquetes = new ArrayList<>();
+
+        NavigableMap<Integer, List<Paquete>> subArbol = arbolDeUrgencias.subMap(urgenciaMinima, true, urgenciaMaxima, true);
+
+        for (List<Paquete> listaPorUrgencia : subArbol.values()) {
+            paquetes.addAll(listaPorUrgencia);
+        }
+        return paquetes;
     }
 }

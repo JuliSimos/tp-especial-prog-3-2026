@@ -13,5 +13,6 @@ public class TestServicios {
         System.out.println("Paquetes sin alimentos: " + servicios.servicio2(false));
 
         System.out.println("\n--- SERVICIO 3 ---");
+        System.out.println("" + servicios.servicio3(80,100));
     }
 }
