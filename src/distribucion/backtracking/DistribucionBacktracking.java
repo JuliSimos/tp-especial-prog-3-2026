@@ -15,6 +15,12 @@ public class DistribucionBacktracking {
     private List<Camion> camiones;
     private List<Paquete> paquetes;
 
+    /**
+     * Complejidad temporal: O(N),
+     * donde N es la cantidad de paquetes.
+     * Se inicializan los atributos de la clase y se calcula
+     * el peso total de los paquetes recorriendo la lista una vez.
+     */
     public DistribucionBacktracking(List<Camion> camiones, List<Paquete> paquetes) {
         this.camiones = camiones;
         this.paquetes = paquetes;
@@ -23,6 +29,18 @@ public class DistribucionBacktracking {
         this.estados = 0;
     }
 
+    /**
+     * Complejidad temporal: O((M + 1)^N)
+     *
+     * Donde N es la cantidad de paquetes y M la cantidad de camiones.
+     *
+     * El algoritmo genera todas las combinaciones posibles de asignación
+     * de paquetes. Para cada paquete puede elegirse uno de los M camiones
+     * o dejarlo sin asignar.
+     *
+     * Por este motivo, la cantidad de configuraciones posibles es del
+     * orden de (M + 1)^N, resultando en una complejidad exponencial.
+     */
     public SolucionBacktracking getDistribucionFinal() {
         this.solucion = new SolucionBacktracking();
         this.menorPesoSinAsignar = this.getPesoTotal();
