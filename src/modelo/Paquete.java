@@ -34,6 +34,7 @@ public class Paquete {
     public double getPeso() {
         return peso;
     }
+
     public String toString(){
         return "[ id: " + this.idPaquete + ", codigo: " + this.codigo + ", peso: " + this.peso + ", contieneAlimentos: " + this.contieneAlimentos + ", nivelUrgencia: " + this.nivelUrgencia + " ]";
     }

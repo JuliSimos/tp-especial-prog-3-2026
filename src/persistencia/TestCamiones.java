@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class TestCamiones {
     public static void main(String[] args) {
+        String caso1 = "Camiones.csv";
+
         HashMap<String, Camion> camiones = new LectorDeCamiones().cargar("Camiones.csv");
 
         System.out.printf("%-6s %-12s %-14s %-10s%n", "ID", "PATENTE", "REFRIGERADO", "CARGA MÁXIMA");

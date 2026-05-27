@@ -7,58 +7,60 @@ import persistencia.LectorDePaquetes;
 
 import java.util.*;
 
-//Completar con las estructuras y métodos privados que se requieran.
+// Completar con las estructuras y métodos privados que se requieran.
 public class Servicios {
 
-    private HashMap<String, Paquete> paquetes;
-    private HashMap<String, Camion> camiones;
+    private HashMap<String, Paquete> paquetesPorCodigo;
+    private HashMap<String, Camion> camionesPorPatente; //No se si inicializar los camiones directamente en una lista y no en HashMap
 
     // Estructuras auxiliares para resolver el servicio 2
     private List<Paquete> paquetesConAlimentos;
     private List<Paquete> paquetesSinAlimentos;
 
-    //Estrcturas auxiliares para resolver parte 2
-    private List<Camion> camionesConRefrigeracion;
-    private List<Camion> camionesSinRefrigeracion;
-
-    //Estructuar auxiliar para resolver el servicio 3
+    // Estructuar auxiliar para resolver el servicio 3
     private TreeMap<Integer, List<Paquete>> arbolDeUrgencias;
 
 
     /**
      * Complejidad temporal O(N log N + M).
-     * Donde N es la cantidad de paquetes y M la cantidad de camiones.
      *
-     * Camiones:
-     * La lectura y carga de los M camiones requiere O(M).
-     * Luego, se recorren una vez para clasificarlos en las listas
-     * de camiones con y sin refrigeración, lo que requiere O(M).
+     * Donde:
+     * N = cantidad de paquetes.
+     * M = cantidad de camiones.
      *
-     * Paquetes:
-     * La lectura y carga de los N paquetes requiere O(N).
-     * Luego, se recorren para construir las estructuras auxiliares:
-     * agregarlos a las listas toma O(1) por paquete,
-     * mientras que insertarlos en el TreeMap toma O(log N) por operación.
-     * En total, el procesamiento e indexación de paquetes requiere O(N log N).
+     * 1) Lectura de archivos:
+     * - Cargar los paquetes en el HashMap requiere O(N).
+     * - Cargar los camiones en el HashMap requiere O(M).
+     *
+     * 2) Construcción de estructuras auxiliares:
+     * - Recorrer todos los paquetes para separarlos en las listas
+     *   paquetesConAlimentos y paquetesSinAlimentos requiere O(N).
+     *
+     * - Recorrer todos los paquetes para indexarlos por nivel de urgencia
+     *   en el TreeMap requiere O(log N) por inserción en el peor caso,
+     *   resultando en O(N log N).
+     *
+     * Sumando todos los costos:
+     * O(N) + O(M) + O(N) + O(N log N)
+     *
+     * La complejidad final queda dominada por:
+     * O(N log N + M).
      */
     public Servicios(String pathCamiones, String pathPaquetes) {
         LectorDePaquetes lectorPaquetes = new LectorDePaquetes();
         LectorDeCamiones lectorCamiones = new LectorDeCamiones();
 
-        this.paquetes = lectorPaquetes.cargar(pathPaquetes);
-        this.camiones = lectorCamiones.cargar(pathCamiones);
+        this.paquetesPorCodigo = lectorPaquetes.cargar(pathPaquetes);
+        this.camionesPorPatente = lectorCamiones.cargar(pathCamiones);
 
         this.paquetesConAlimentos = new ArrayList<>();
         this.paquetesSinAlimentos = new ArrayList<>();
-
-        this.camionesConRefrigeracion = new ArrayList<>();
-        this.camionesSinRefrigeracion = new ArrayList<>();
 
         this.arbolDeUrgencias = new TreeMap<>();
 
         //Carga de listas auxiliares
 
-        for (Paquete paquete : this.paquetes.values()) {
+        for (Paquete paquete : this.paquetesPorCodigo.values()) {
             if (paquete.isContieneAlimentos()) {
                 this.paquetesConAlimentos.add(paquete);
             } else {
@@ -66,15 +68,7 @@ public class Servicios {
             }
         }
 
-        for (Camion camion : this.camiones.values()) {
-            if (camion.isRefrigerado()){
-                this.camionesConRefrigeracion.add(camion);
-            }else {
-                this.camionesSinRefrigeracion.add(camion);
-            }
-        }
-
-        for (Paquete paquete : this.paquetes.values()) {
+        for (Paquete paquete : this.paquetesPorCodigo.values()) {
             // Si no existe la lista para esa urgencia, la crea.
             arbolDeUrgencias.computeIfAbsent(paquete.getNivelUrgencia(), k -> new ArrayList<>()).add(paquete);
         }
@@ -86,7 +80,7 @@ public class Servicios {
      * El HashMap usa una función hash para obtener el paquete por su clave, lo que toma tiempo constante en promedio
      */
     public Paquete servicio1(String codigoPaquete) {
-        return paquetes.get(codigoPaquete);
+        return paquetesPorCodigo.get(codigoPaquete);
     }
 
     /**
@@ -102,7 +96,6 @@ public class Servicios {
         }
 
     }
-
 
     /**
      * Complejidad temporal O(log N + K).
@@ -120,5 +113,24 @@ public class Servicios {
             paquetes.addAll(listaPorUrgencia);
         }
         return paquetes;
+    }
+
+    //Metodos necesarios para resolver parte 2: distribucion de paquetes en camiones
+    /**
+     * Complejidad temporal O(N).
+     * Se construye una nueva lista copiando los N paquetes almacenados
+     * en el HashMap.
+     */
+    public List<Paquete> getPaquetes() {
+        return new ArrayList<>(this.paquetesPorCodigo.values());
+    }
+
+    /**
+     * Complejidad temporal O(M).
+     * Se construye una nueva lista copiando los M camiones almacenados
+     * en el HashMap.
+     */
+    public List<Camion> getCamiones() {
+        return new ArrayList<>(this.camionesPorPatente.values());
     }
 }

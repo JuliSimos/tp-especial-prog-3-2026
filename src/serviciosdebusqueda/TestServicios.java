@@ -5,7 +5,7 @@ public class TestServicios {
         Servicios servicios = new Servicios("Camiones.csv", "Paquetes.csv");
 
         System.out.println("--- SERVICIO 1 ---");
-        System.out.println("Existe P001: " + servicios.servicio1("P001"));
+        System.out.println("Existe P004: " + servicios.servicio1("P004"));
         System.out.println("No existe P999: " + servicios.servicio1("P999"));
 
         System.out.println("\n--- SERVICIO 2 ---");
