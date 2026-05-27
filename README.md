@@ -4,18 +4,29 @@
 ```text
 src/
 ├── distribucion/
-│   ├── DistribucionBacktracking.java
+│   ├── backtracking/
+│   │   ├── CargaDeCamion.java
+│   │   ├── DistribucionBacktracking.java
+│   │   ├── SolucionBacktracking.java
+│   │   └── Test_DistribucionBacktracking.java
 │   └── DistribucionGreedy.java
+│
 ├── modelo/
 │   ├── Camion.java
 │   └── Paquete.java
+│
 ├── persistencia/
 │   ├── archivos/
 │   │   ├── Camiones.csv
+│   │   ├── camiones_capacidad_refrigerada_insuficiente.csv
+│   │   ├── camiones_restriccion_extrema.csv
 │   │   └── Paquetes.csv
 │   ├── LectorCSV.java
 │   ├── LectorDeCamiones.java
 │   ├── LectorDePaquetes.java
+│   ├── TestCamiones.java
+│   └── TestPaquetes.java
+│
 └── serviciosdebusqueda/
     ├── Servicios.java
     └── TestServicios.java
@@ -43,3 +54,97 @@ src/
 
 - **Decisión de diseño:** Para resolver consultas por rango de manera eficiente, se incorporó una estructura auxiliar de tipo `TreeMap<Integer, List<Paquete>>`, donde cada clave representa un nivel de urgencia y el valor asociado contiene una lista con todos los paquetes de dicho nivel. Esta estructura se construye una única vez durante la inicialización del sistema, al momento de cargar los datos desde el archivo CSV.
 - **Justificación:** El TreeMap mantiene sus claves ordenadas automáticamente, lo que permite obtener de forma eficiente únicamente los niveles de urgencia comprendidos entre los valores mínimo y máximo mediante el método `subMap()`. De esta manera se evita recorrer la totalidad de los paquetes en cada consulta. La obtención del submapa tiene complejidad **$O(log N)$** y la construcción del resultado requiere recorrer únicamente los **K** paquetes recuperados, logrando una complejidad total de **$O(log N + K)$**, donde **N** es la cantidad de niveles de urgencia almacenados y **K** la cantidad de paquetes retornados.
+
+
+
+## Solución con Backtracking – Asignación de Paquetes
+### Problema
+
+Se busca asignar todos los paquetes disponibles a una lista de camiones, minimizando el peso total de los paquetes que no pueden ser asignados, respetando las restricciones de capacidad y refrigeración.
+
+### Representación del problema
+
+- `List<Paquete> paquetes`: conjunto de paquetes a asignar
+- `List<Camion> camiones`: lista de camiones disponibles
+
+### Idea de la solución
+
+Se prueban todas las combinaciones posibles de asignación de paquetes a camiones.
+
+Para cada paquete, el algoritmo decide:
+
+- Asignarlo a un camión compatible
+- No asignarlo
+
+La solución se construye de manera recursiva mediante backtracking.
+
+### Estructura de la solución
+
+La solución final se representa mediante la clase `SolucionBacktracking`:
+
+- `List<CargaDeCamion> camionesCargados`: estado final de asignación
+- `double pesoNoAsignado`: peso total de paquetes no asignados
+- `int estadosGenerados`: cantidad de estados explorados por el algoritmo
+
+Cada `CargaDeCamion` representa un camión con su lista de paquetes asignados y su peso actual.
+
+### Estado durante la ejecución
+
+Durante la ejecución se utilizan las siguientes variables:
+
+- `indexPaquete`: indica qué paquete se está intentando asignar
+- `cargaParcial`: estado actual de asignación de paquetes a camiones
+- `pesoSinAsignarActual`: peso acumulado de los paquetes que aún no fueron asignados en ese estado
+
+### Restricciones
+
+Una asignación es válida si:
+
+- El camión tiene capacidad suficiente (`tieneCapacidadPara(paquete)`)
+- Si el paquete contiene alimentos, el camión debe ser refrigerado
+
+``` java
+public boolean puedeAsignarse(Paquete actual, CargaDeCamion carga)
+```
+
+
+### Generación de candidatos
+
+Para cada paquete se generan las siguientes opciones:
+
+- Intentar asignarlo a cada camión compatible
+- No asignarlo
+
+*Un camión se considera compatible si tiene capacidad disponible y cumple con el requisito de refrigeración en caso de ser necesario.*
+
+### Caso base
+
+El algoritmo finaliza cuando no quedan más paquetes por procesar
+En este punto, se compara la solución actual con la mejor solución conocida y, si es mejor, se actualiza.
+
+```java
+if (indexPaquete >= paquetes.size()) {
+    if (pesoSinAsignarActual < menorPesoSinAsignar) {
+        // se guarda la mejor solución encontrada
+    }
+    return;
+}
+```
+
+### Podas
+
+Se aplica una poda simple basada en la mejor solución encontrada hasta el momento:
+```java
+if (menorPesoSinAsignar == 0)
+    return;
+```
+- Justificaicon: es el mejor caso posible, todos los paquetes fueron asignados. Por lo que no es necesario seguir explorando otras ramas, dado que no puede mejorarse el resultado
+
+### Complejidad
+
+La complejidad del algoritmo es exponencial:   **$O ( ( M + 1 ) N )$**
+
+- N es la cantidad de paquetes
+- M es la cantidad de camiones
+
+- Esto se debe a que, para cada paquete, existen M posibles camiones o la opción de no asignarlo
