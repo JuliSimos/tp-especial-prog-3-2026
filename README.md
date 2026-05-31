@@ -49,12 +49,7 @@ src/
 - **Justificación:** Con esta estrategia de procesamiento previo, el método reduce su complejidad a tiempo constante **$O(1)$**, ya que ante una consulta solo evalúa el booleano y retorna la referencia a la lista correspondiente de manera instantánea.
 
 **Servicio 3**
-
-**Requerimiento:** Dados dos valores enteros (mínimo y máximo), retornar todos los paquetes cuyo nivel de urgencia se encuentre dentro de ese rango (inclusive).
-
-- **Decisión de diseño:** Para resolver consultas por rango de manera eficiente, se incorporó una estructura auxiliar de tipo `TreeMap<Integer, List<Paquete>>`, donde cada clave representa un nivel de urgencia y el valor asociado contiene una lista con todos los paquetes de dicho nivel. Esta estructura se construye una única vez durante la inicialización del sistema, al momento de cargar los datos desde el archivo CSV.
-- **Justificación:** El TreeMap mantiene sus claves ordenadas automáticamente, lo que permite obtener de forma eficiente únicamente los niveles de urgencia comprendidos entre los valores mínimo y máximo mediante el método `subMap()`. De esta manera se evita recorrer la totalidad de los paquetes en cada consulta. La obtención del submapa tiene complejidad **$O(log N)$** y la construcción del resultado requiere recorrer únicamente los **K** paquetes recuperados, logrando una complejidad total de **$O(log N + K)$**, donde **N** es la cantidad de niveles de urgencia almacenados y **K** la cantidad de paquetes retornados.
-
+- En proceso...
 
 
 ## Solución con Backtracking – Asignación de Paquetes
@@ -92,7 +87,7 @@ Cada `CargaDeCamion` representa un camión con su lista de paquetes asignados y 
 
 Durante la ejecución se utilizan las siguientes variables:
 
-- `indexPaquete`: indica qué paquete se está intentando asignar
+- `indicePaquete`: indica qué paquete se está intentando asignar
 - `cargaParcial`: estado actual de asignación de paquetes a camiones
 - `pesoSinAsignarActual`: peso acumulado de los paquetes que aún no fueron asignados en ese estado
 
@@ -119,11 +114,11 @@ Para cada paquete se generan las siguientes opciones:
 
 ### Caso base
 
-El algoritmo finaliza cuando no quedan más paquetes por procesar
+El algoritmo finaliza cuando no quedan más paquetes por procesar.
 En este punto, se compara la solución actual con la mejor solución conocida y, si es mejor, se actualiza.
 
-```java
-if (indexPaquete >= paquetes.size()) {
+``` java
+if (indicePaquete >= paquetes.size()) {
     if (pesoSinAsignarActual < menorPesoSinAsignar) {
         // se guarda la mejor solución encontrada
     }
@@ -134,17 +129,8 @@ if (indexPaquete >= paquetes.size()) {
 ### Podas
 
 Se aplica una poda simple basada en la mejor solución encontrada hasta el momento:
-```java
+``` java
 if (menorPesoSinAsignar == 0)
     return;
 ```
 - Justificaicon: es el mejor caso posible, todos los paquetes fueron asignados. Por lo que no es necesario seguir explorando otras ramas, dado que no puede mejorarse el resultado
-
-### Complejidad
-
-La complejidad del algoritmo es exponencial:   **$O ( ( M + 1 ) N )$**
-
-- N es la cantidad de paquetes
-- M es la cantidad de camiones
-
-- Esto se debe a que, para cada paquete, existen M posibles camiones o la opción de no asignarlo

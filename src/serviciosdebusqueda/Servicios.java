@@ -17,12 +17,9 @@ public class Servicios {
     private List<Paquete> paquetesConAlimentos;
     private List<Paquete> paquetesSinAlimentos;
 
-    // Estructuar auxiliar para resolver el servicio 3
-    private TreeMap<Integer, List<Paquete>> arbolDeUrgencias;
-
-
+//SubList -> crea una lista, pero copia solo una vista
     /**
-     * Complejidad temporal O(N log N + M).
+     * Complejidad temporal O(N + M).
      *
      * Donde:
      * N = cantidad de paquetes.
@@ -36,15 +33,11 @@ public class Servicios {
      * - Recorrer todos los paquetes para separarlos en las listas
      *   paquetesConAlimentos y paquetesSinAlimentos requiere O(N).
      *
-     * - Recorrer todos los paquetes para indexarlos por nivel de urgencia
-     *   en el TreeMap requiere O(log N) por inserción en el peor caso,
-     *   resultando en O(N log N).
-     *
      * Sumando todos los costos:
-     * O(N) + O(M) + O(N) + O(N log N)
+     * O(N) + O(M) + O(N)
      *
      * La complejidad final queda dominada por:
-     * O(N log N + M).
+     * O(N + M).
      */
     public Servicios(String pathCamiones, String pathPaquetes) {
         LectorDePaquetes lectorPaquetes = new LectorDePaquetes();
@@ -56,8 +49,6 @@ public class Servicios {
         this.paquetesConAlimentos = new ArrayList<>();
         this.paquetesSinAlimentos = new ArrayList<>();
 
-        this.arbolDeUrgencias = new TreeMap<>();
-
         //Carga de listas auxiliares
 
         for (Paquete paquete : this.paquetesPorCodigo.values()) {
@@ -66,11 +57,6 @@ public class Servicios {
             } else {
                 this.paquetesSinAlimentos.add(paquete);
             }
-        }
-
-        for (Paquete paquete : this.paquetesPorCodigo.values()) {
-            // Si no existe la lista para esa urgencia, la crea.
-            arbolDeUrgencias.computeIfAbsent(paquete.getNivelUrgencia(), k -> new ArrayList<>()).add(paquete);
         }
     }
 
@@ -98,21 +84,10 @@ public class Servicios {
     }
 
     /**
-     * Complejidad temporal O(log N + K).
-     * Donde N es la cantidad de niveles de urgencia almacenados y K la cantidad
-     * de paquetes recuperados.
-     * La obtención del submapa correspondiente al rango solicitado toma O(log N)
-     * y la construcción del resultado requiere recorrer los K paquetes encontrados.
+     * Complejidad temporal
      */
     public List<Paquete> servicio3(int urgenciaMinima, int urgenciaMaxima) {
-        List<Paquete> paquetes = new ArrayList<>();
-
-        NavigableMap<Integer, List<Paquete>> subArbol = arbolDeUrgencias.subMap(urgenciaMinima, true, urgenciaMaxima, true);
-
-        for (List<Paquete> listaPorUrgencia : subArbol.values()) {
-            paquetes.addAll(listaPorUrgencia);
-        }
-        return paquetes;
+        return null;
     }
 
     //Metodos necesarios para resolver parte 2: distribucion de paquetes en camiones

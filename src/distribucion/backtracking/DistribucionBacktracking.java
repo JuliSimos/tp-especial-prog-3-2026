@@ -11,16 +11,10 @@ public class DistribucionBacktracking {
     private double menorPesoSinAsignar;
     private int estados;
 
-    //Esctructura para guardar los datos
+    //Esctructuras para guardar los datos
     private List<Camion> camiones;
     private List<Paquete> paquetes;
 
-    /**
-     * Complejidad temporal: O(N),
-     * donde N es la cantidad de paquetes.
-     * Se inicializan los atributos de la clase y se calcula
-     * el peso total de los paquetes recorriendo la lista una vez.
-     */
     public DistribucionBacktracking(List<Camion> camiones, List<Paquete> paquetes) {
         this.camiones = camiones;
         this.paquetes = paquetes;
@@ -29,21 +23,9 @@ public class DistribucionBacktracking {
         this.estados = 0;
     }
 
-    /**
-     * Complejidad temporal: O((M + 1)^N)
-     *
-     * Donde N es la cantidad de paquetes y M la cantidad de camiones.
-     *
-     * El algoritmo genera todas las combinaciones posibles de asignación
-     * de paquetes. Para cada paquete puede elegirse uno de los M camiones
-     * o dejarlo sin asignar.
-     *
-     * Por este motivo, la cantidad de configuraciones posibles es del
-     * orden de (M + 1)^N, resultando en una complejidad exponencial.
-     */
     public SolucionBacktracking getDistribucionFinal() {
         this.solucion = new SolucionBacktracking();
-        this.menorPesoSinAsignar = this.getPesoTotal();
+        this.menorPesoSinAsignar = this.getPesoTotal(); //se inicializa con la carga total de todos los paquetes
         this.estados = 0;
 
         List<CargaDeCamion> cargaParcial = new ArrayList<>();
@@ -54,22 +36,15 @@ public class DistribucionBacktracking {
 
         double pesoSinAsignarActual = menorPesoSinAsignar; //en un principio valen lo mismo, luego se van modificando
 
-        List<CargaDeCamion> cargaVacia = new ArrayList<>();
-        for (Camion c: camiones){
-            cargaVacia.add(new CargaDeCamion(c, new ArrayList<>()));
-        }
-        this.solucion = new SolucionBacktracking(cargaVacia, pesoSinAsignarActual);
-
-
         buscarSolucion(0, cargaParcial, pesoSinAsignarActual);
-        this.solucion.setEstadosGenerados(this.estados); //actualizo la solucion con el tota de estados generados
+        this.solucion.setEstadosGenerados(this.estados); //actualizo la solucion con el total de estados generados
 
         return solucion;
     }
 
-    private void buscarSolucion(int indexPaquete, List<CargaDeCamion> cargaParcial, double pesoSinAsignarActual) {
+    private void buscarSolucion(int indicePaquete, List<CargaDeCamion> cargaParcial, double pesoSinAsignarActual) {
         this.estados++;
-        if (indexPaquete >= paquetes.size()) {
+        if (indicePaquete >= paquetes.size()) {
             if (pesoSinAsignarActual < menorPesoSinAsignar) {
 
                 List<CargaDeCamion> nuevaSolucion = new ArrayList<>();
@@ -85,11 +60,12 @@ public class DistribucionBacktracking {
 
             return;
         }
-
+        //Si ya encontro la mejor solucion freno, no puedo encontrar una mejor
         if (menorPesoSinAsignar == 0)
             return;
 
-        Paquete actual = paquetes.get(indexPaquete);
+
+        Paquete actual = paquetes.get(indicePaquete);
 
         for (int c = 0; c < cargaParcial.size(); c++) {
             CargaDeCamion cargaActual = cargaParcial.get(c);
@@ -99,22 +75,23 @@ public class DistribucionBacktracking {
                 cargaActual.asignarPaquete(actual);
                 pesoSinAsignarActual = pesoSinAsignarActual - actual.getPeso();
 
-                buscarSolucion(indexPaquete + 1, cargaParcial, pesoSinAsignarActual);
+                buscarSolucion(indicePaquete + 1, cargaParcial, pesoSinAsignarActual);
 
                 cargaActual.quitarPaquete(actual);
                 pesoSinAsignarActual = pesoSinAsignarActual + actual.getPeso();
             }
         }
+
         //sin considerar el paquete
-        buscarSolucion(indexPaquete + 1, cargaParcial, pesoSinAsignarActual);
+        buscarSolucion(indicePaquete + 1, cargaParcial, pesoSinAsignarActual);
 
     }
 
     public boolean puedeAsignarse(Paquete actual, CargaDeCamion carga) {
         //me fijo si el camion tiene espacio
-        //me fijo si el paquete es refrigerado y si el camion lo permite transportar
         if (!carga.tieneCapacidadPara(actual)) return false;
 
+        //me fijo si el paquete es refrigerado y si el camion lo permite transportar
         if (actual.isContieneAlimentos())
             return carga.getCamion().isRefrigerado();
 
