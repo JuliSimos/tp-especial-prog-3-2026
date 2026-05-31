@@ -49,7 +49,11 @@ src/
 - **Justificación:** Con esta estrategia de procesamiento previo, el método reduce su complejidad a tiempo constante **$O(1)$**, ya que ante una consulta solo evalúa el booleano y retorna la referencia a la lista correspondiente de manera instantánea.
 
 **Servicio 3**
-- En proceso...
+
+**Requerimiento:** Dados dos valores enteros que representan un nivel de urgencia `mínimo` y `máximo`, retornar todos los paquetes cuyo nivel de urgencia se encuentre dentro de ese rango (inclusive).
+
+- **Decisión de diseño:** Dado que los niveles de urgencia están acotados entre 1 y 100, se implementó una estructura auxiliar de tipo `List<List<Paquete>>`, donde cada posición representa un nivel de urgencia y almacena los paquetes asociados a dicho nivel. Esta estructura se construye una única vez durante la carga de datos.
+- **Justificación:** Esta organización evita recorrer todos los paquetes ante cada consulta. Mediante `subList()` se obtiene una vista de las listas correspondientes al rango solicitado y luego se recopilan únicamente los paquetes pertenecientes a esos niveles. La complejidad queda determinada por la cantidad de paquetes retornados, resultando en un costo temporal de **$O(P)$**, donde **P** es la cantidad de paquetes que forman parte del resultado.
 
 
 ## Solución con Backtracking – Asignación de Paquetes

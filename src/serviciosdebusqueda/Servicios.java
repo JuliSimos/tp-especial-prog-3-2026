@@ -17,7 +17,9 @@ public class Servicios {
     private List<Paquete> paquetesConAlimentos;
     private List<Paquete> paquetesSinAlimentos;
 
-//SubList -> crea una lista, pero copia solo una vista
+    // Estructura para resolver el servicio 3
+    private List<List<Paquete>> paquetesPorUrgencia;
+
     /**
      * Complejidad temporal O(N + M).
      *
@@ -25,16 +27,10 @@ public class Servicios {
      * N = cantidad de paquetes.
      * M = cantidad de camiones.
      *
-     * 1) Lectura de archivos:
-     * - Cargar los paquetes en el HashMap requiere O(N).
-     * - Cargar los camiones en el HashMap requiere O(M).
-     *
-     * 2) Construcción de estructuras auxiliares:
-     * - Recorrer todos los paquetes para separarlos en las listas
-     *   paquetesConAlimentos y paquetesSinAlimentos requiere O(N).
-     *
-     * Sumando todos los costos:
-     * O(N) + O(M) + O(N)
+     * - La carga de paquetes requiere O(N).
+     * - La carga de camiones requiere O(M).
+     * - La construcción de las estructuras auxiliares
+     *   requiere recorrer todos los paquetes una vez: O(N).
      *
      * La complejidad final queda dominada por:
      * O(N + M).
@@ -49,7 +45,14 @@ public class Servicios {
         this.paquetesConAlimentos = new ArrayList<>();
         this.paquetesSinAlimentos = new ArrayList<>();
 
+        this.paquetesPorUrgencia = new ArrayList<>(101);
         //Carga de listas auxiliares
+
+
+        // Inicializo la estructura auxiliar para agrupar paquetes por nivel de urgencia
+        for(int i = 0; i <= 100; i++){
+            this.paquetesPorUrgencia.add(new ArrayList<>());
+        }
 
         for (Paquete paquete : this.paquetesPorCodigo.values()) {
             if (paquete.isContieneAlimentos()) {
@@ -57,7 +60,11 @@ public class Servicios {
             } else {
                 this.paquetesSinAlimentos.add(paquete);
             }
+        // Aprovecho el recorrido para ir agregando los paquetes por su nivel de urgencia
+            int nivel = paquete.getNivelUrgencia();
+            this.paquetesPorUrgencia.get(nivel).add(paquete);
         }
+
     }
 
 
@@ -84,13 +91,28 @@ public class Servicios {
     }
 
     /**
-     * Complejidad temporal
+     * Complejidad temporal O(P).
+     *
+     * Donde P es la cantidad de paquetes retornados.
+     *
+     * Se recorren los paquetes pertenecientes al rango de
+     * urgencias solicitado para construir la lista resultado.
      */
     public List<Paquete> servicio3(int urgenciaMinima, int urgenciaMaxima) {
-        return null;
+        if (urgenciaMinima < 1 || urgenciaMaxima > 100 || urgenciaMinima > urgenciaMaxima) {
+            //Obtener la sublista de niveles por rango considerando que el rango final se incluye
+            //SubList() no copia elementos, crea una vista sobre la lista original.
+            List<List<Paquete>> lista = this.paquetesPorUrgencia.subList(urgenciaMinima, urgenciaMaxima + 1);
+
+            List<Paquete> paquetes = new ArrayList<>();
+            for (List<Paquete> listaPaquetes : lista) {
+                paquetes.addAll(listaPaquetes);
+            }
+            return paquetes;
+        }
+        return new ArrayList<>();
     }
 
-    //Metodos necesarios para resolver parte 2: distribucion de paquetes en camiones
     /**
      * Complejidad temporal O(N).
      * Se construye una nueva lista copiando los N paquetes almacenados
