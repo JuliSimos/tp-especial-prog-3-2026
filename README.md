@@ -182,4 +182,10 @@ Minimizar el peso total de los paquetes no asignados.
 Se contabiliza la cantidad de candidatos considerados durante la ejecución del algoritmo.
 
 Esta métrica representa la cantidad de verificaciones realizadas para determinar si un paquete puede ser asignado a un camión respetando las restricciones del problema.
-    
+
+
+## Observaciones
+
+En la ejecución realizada quedaron paquetes sin asignar porque requerían transporte refrigerado y los camiones que aún tenían capacidad disponible no eran refrigerados.
+
+Esto muestra que la estrategia Greedy obtiene una solución válida, aunque no siempre la mejor posible.
