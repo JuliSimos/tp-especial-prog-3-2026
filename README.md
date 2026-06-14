@@ -138,3 +138,48 @@ if (menorPesoSinAsignar == 0)
     return;
 ```
 - Justificaicon: es el mejor caso posible, todos los paquetes fueron asignados. Por lo que no es necesario seguir explorando otras ramas, dado que no puede mejorarse el resultado
+
+# Solución con Greedy – Asignación de Paquetes
+
+## Problema
+
+Se busca asignar paquetes a los camiones disponibles minimizando el peso total de los paquetes que no pueden ser asignados, respetando las restricciones de capacidad y refrigeración.
+
+## Idea de la solución
+
+Se aplica una estrategia Greedy donde, en cada iteración, se selecciona el paquete de mayor peso que aún no fue procesado.
+
+Luego se busca un camión donde sea factible asignarlo respetando las restricciones del problema. Si existe un camión válido, el paquete se asigna; en caso contrario, queda sin asignar.
+
+Las decisiones tomadas son irrevocables y no se reconsideran posteriormente.
+
+## Función de selección
+
+Se selecciona el paquete de mayor peso disponible.
+
+**Justificación:** los paquetes más pesados son los más difíciles de ubicar y son los que más impactan en el peso total no asignado. Por ello se priorizan primero.
+
+## Restricciones
+
+Un paquete puede asignarse a un camión únicamente si:
+
+* El camión posee capacidad suficiente.
+* Si el paquete contiene alimentos, el camión debe ser refrigerado.
+
+La validación se realiza mediante el método:
+
+```java
+private boolean puedeAsignarse(Paquete paquete,
+                               CargaDeCamion carga)
+```
+
+## Función objetivo
+
+Minimizar el peso total de los paquetes no asignados.
+
+## Métrica utilizada
+
+Se contabiliza la cantidad de candidatos considerados durante la ejecución del algoritmo.
+
+Esta métrica representa la cantidad de verificaciones realizadas para determinar si un paquete puede ser asignado a un camión respetando las restricciones del problema.
+    
