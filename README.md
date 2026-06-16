@@ -148,10 +148,13 @@ if(menorPesoSinAsignar == 0)
 Antes de seguir explorando una rama, se calcula el peso total de los paquetes que todavía faltan procesar.
 ``` java
 double pesoPaquetesFaltantes = 0;
+
 for(int p = indicePaquete; p < paquetes.size(); p++){
     pesoPaquetesFaltantes += paquetes.get(p).getPeso(); 
-} 
-double mejorPosible = pesoSinAsignarActual - pesoPaquetesFaltantes; 
+}
+
+double mejorPosible = pesoSinAsignarActual - pesoPaquetesFaltantes;
+
 if(mejorPosible >= menorPesoSinAsignar) 
     return;
 ```
