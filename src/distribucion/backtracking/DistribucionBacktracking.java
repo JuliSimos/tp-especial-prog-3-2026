@@ -60,8 +60,27 @@ public class DistribucionBacktracking {
 
             return;
         }
-        //Si ya encontro la mejor solucion freno, no puedo encontrar una mejor
-        if (menorPesoSinAsignar == 0)
+        /*
+            Poda 1:
+            Si ya se encontró una solución con peso no asignado igual a 0,
+            no existe una solución mejor
+         */
+        if (menorPesoSinAsignar == 0) {
+            return;
+        }
+        /*
+            Poda 2:
+            Si aun asignando todos los paquetes que faltan procesar no logro mejorar
+            la mejor solución encontrada hasta el momento, la rama se descarta
+         */
+        double pesoPaquetesFaltantes = 0;
+        //calculo el peso total de los paquetes que faltan procesar
+        for(int p = indicePaquete; p < paquetes.size(); p++){
+            pesoPaquetesFaltantes +=  paquetes.get(p).getPeso();
+        }
+        double mejorPosible = pesoSinAsignarActual - pesoPaquetesFaltantes;
+
+        if(mejorPosible >= menorPesoSinAsignar)
             return;
 
 
@@ -81,6 +100,7 @@ public class DistribucionBacktracking {
                 pesoSinAsignarActual = pesoSinAsignarActual + actual.getPeso();
             }
         }
+
 
         //sin considerar el paquete
         buscarSolucion(indicePaquete + 1, cargaParcial, pesoSinAsignarActual);
@@ -104,6 +124,13 @@ public class DistribucionBacktracking {
             suma += p.getPeso();
         }
         return suma;
+    }
+    public double getCapacidadLibreTotal(List<CargaDeCamion> cargas) {
+        double libre = 0;
+        for (CargaDeCamion c : cargas) {
+            libre += c.getCapacidadDisponible();
+        }
+        return libre;
     }
 }
 

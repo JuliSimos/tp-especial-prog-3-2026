@@ -10,6 +10,9 @@ src/
 │   │   ├── SolucionBacktracking.java
 │   │   └── Test_DistribucionBacktracking.java
 │   └── DistribucionGreedy.java
+│   │   ├── DistribucionGreedy.java
+│   │   ├── SolucionGreedy.java
+│   │   └── Test_DistribucionGreedy.java
 │
 ├── modelo/
 │   ├── Camion.java
@@ -93,7 +96,7 @@ Durante la ejecución se utilizan las siguientes variables:
 
 - `indicePaquete`: indica qué paquete se está intentando asignar
 - `cargaParcial`: estado actual de asignación de paquetes a camiones
-- `pesoSinAsignarActual`: peso acumulado de los paquetes que aún no fueron asignados en ese estado
+- `pesoSinAsignarActual`: peso total de los paquetes que permanecen sin asignar en el estado actual
 
 ### Restricciones
 
@@ -132,20 +135,37 @@ if (indicePaquete >= paquetes.size()) {
 
 ### Podas
 
-Se aplica una poda simple basada en la mejor solución encontrada hasta el momento:
+#### Poda 1: Solución óptima encontrada
+
+Si en algún momento se obtiene una solución con peso no asignado igual a 0, la búsqueda puede finalizar.
 ``` java
-if (menorPesoSinAsignar == 0)
+if(menorPesoSinAsignar == 0)
     return;
 ```
-- Justificaicon: es el mejor caso posible, todos los paquetes fueron asignados. Por lo que no es necesario seguir explorando otras ramas, dado que no puede mejorarse el resultado
+- **Justificación**: un peso no asignado de 0 representa el mejor resultado posible, ya que todos los paquetes fueron asignados. No existe una solución mejor.
 
-# Solución con Greedy – Asignación de Paquetes
+#### Poda 2: Imposibilidad de mejorar la mejor solución actual
+Antes de seguir explorando una rama, se calcula el peso total de los paquetes que todavía faltan procesar.
+``` java
+double pesoPaquetesFaltantes = 0;
+for(int p = indicePaquete; p < paquetes.size(); p++){
+    pesoPaquetesFaltantes += paquetes.get(p).getPeso(); 
+} 
+double mejorPosible = pesoSinAsignarActual - pesoPaquetesFaltantes; 
+if(mejorPosible >= menorPesoSinAsignar) 
+    return;
+```
+- **Justificación**: Se calcula cuál sería el menor peso sin asignar que podría obtenerse si todos los paquetes restantes fueran asignados. Si ese resultado no mejora la mejor solución encontrada hasta el momento, la rama se poda porque no puede producir una solución mejor.
+___
 
-## Problema
+
+## Solución con Greedy – Asignación de Paquetes
+
+### Problema
 
 Se busca asignar paquetes a los camiones disponibles minimizando el peso total de los paquetes que no pueden ser asignados, respetando las restricciones de capacidad y refrigeración.
 
-## Idea de la solución
+### Idea de la solución
 
 Se aplica una estrategia Greedy donde, en cada iteración, se selecciona el paquete de mayor peso que aún no fue procesado.
 
@@ -153,13 +173,13 @@ Luego se busca un camión donde sea factible asignarlo respetando las restriccio
 
 Las decisiones tomadas son irrevocables y no se reconsideran posteriormente.
 
-## Función de selección
+### Función de selección
 
 Se selecciona el paquete de mayor peso disponible.
 
 **Justificación:** los paquetes más pesados son los más difíciles de ubicar y son los que más impactan en el peso total no asignado. Por ello se priorizan primero.
 
-## Restricciones
+### Restricciones
 
 Un paquete puede asignarse a un camión únicamente si:
 
@@ -173,18 +193,18 @@ private boolean puedeAsignarse(Paquete paquete,
                                CargaDeCamion carga)
 ```
 
-## Función objetivo
+### Función objetivo
 
 Minimizar el peso total de los paquetes no asignados.
 
-## Métrica utilizada
+### Métrica utilizada
 
 Se contabiliza la cantidad de candidatos considerados durante la ejecución del algoritmo.
 
 Esta métrica representa la cantidad de verificaciones realizadas para determinar si un paquete puede ser asignado a un camión respetando las restricciones del problema.
 
 
-## Observaciones
+### Observaciones
 
 En la ejecución realizada quedaron paquetes sin asignar porque requerían transporte refrigerado y los camiones que aún tenían capacidad disponible no eran refrigerados.
 
