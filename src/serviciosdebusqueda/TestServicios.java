@@ -2,7 +2,7 @@ package serviciosdebusqueda;
 
 public class TestServicios {
     public static void main(String[] args) {
-        Servicios servicios = new Servicios("Camiones.csv", "Paquetes.csv");
+        Servicios servicios = new Servicios("Paquetes.csv");
 
         System.out.println("--- SERVICIO 1 ---");
         System.out.println("Existe P004: " + servicios.servicio1("P004"));

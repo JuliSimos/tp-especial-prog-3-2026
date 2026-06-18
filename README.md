@@ -9,10 +9,10 @@ src/
 │   │   ├── DistribucionBacktracking.java
 │   │   ├── SolucionBacktracking.java
 │   │   └── Test_DistribucionBacktracking.java
-│   └── DistribucionGreedy.java
-│   │   ├── DistribucionGreedy.java
-│   │   ├── SolucionGreedy.java
-│   │   └── Test_DistribucionGreedy.java
+│   └── Greedy/
+│       ├── DistribucionGreedy.java
+│       ├── SolucionGreedy.java
+│       └── Test_DistribucionGreedy.java
 │
 ├── modelo/
 │   ├── Camion.java
@@ -21,8 +21,6 @@ src/
 ├── persistencia/
 │   ├── archivos/
 │   │   ├── Camiones.csv
-│   │   ├── camiones_capacidad_refrigerada_insuficiente.csv
-│   │   ├── camiones_restriccion_extrema.csv
 │   │   └── Paquetes.csv
 │   ├── LectorCSV.java
 │   ├── LectorDeCamiones.java
@@ -35,7 +33,7 @@ src/
     └── TestServicios.java
 ```
 
-## Servicios de busqueda
+## Servicios de búsqueda
 
 **Servicio 1**
 
@@ -48,8 +46,8 @@ src/
 
 **Requerimiento:** Dado un booleano, retornar el listado de paquetes que contienen alimentos (`true`) o que no los contienen (`false`).
 
-- **Decisión de diseño:** Para evitar recorrer toda la estructura principal en cada consulta (lo que costaría tiempo lineal $O(M)$ por cada llamada), se decidió **precalcular los datos en el constructor**. Se incorporaron dos estructuras auxiliares de tipo `List<Paquete>` (`paquetesConAlimentos` y `paquetesSinAlimentos`) que guardan las referencias a los objetos originales al momento de leer el archivo CSV.
-- **Justificación:** Con esta estrategia de procesamiento previo, el método reduce su complejidad a tiempo constante **$O(1)$**, ya que ante una consulta solo evalúa el booleano y retorna la referencia a la lista correspondiente de manera instantánea.
+- **Decisión de diseño:** Para evitar recorrer toda la estructura principal en cada consulta (lo que costaría tiempo lineal $O(N)$ por cada llamada), se decidió **precalcular los datos en el constructor**. Se incorporaron dos estructuras auxiliares de tipo `List<Paquete>` (`paquetesConAlimentos` y `paquetesSinAlimentos`) que guardan las referencias a los objetos originales al momento de leer el archivo CSV.
+- **Justificación:** Con esta estrategia de procesamiento previo, el método reduce su complejidad a tiempo constante **$O(1)$**, ya que ante una consulta solo evalúa el booleano y retorna la lista correspondiente sin necesidad de recorrer los paquetes.
 
 **Servicio 3**
 
@@ -159,6 +157,15 @@ if(mejorPosible >= menorPesoSinAsignar)
     return;
 ```
 - **Justificación**: Se calcula cuál sería el menor peso sin asignar que podría obtenerse si todos los paquetes restantes fueran asignados. Si ese resultado no mejora la mejor solución encontrada hasta el momento, la rama se poda porque no puede producir una solución mejor.
+
+### Métrica utilizada
+
+Se contabiliza la cantidad de estados generados durante la exploración del árbol de búsqueda.
+
+Cada llamada al método recursivo representa un nuevo estado explorado.
+
+Esta métrica permite evaluar el impacto de las podas aplicadas sobre el espacio de búsqueda.
+
 ___
 
 
@@ -209,6 +216,6 @@ Esta métrica representa la cantidad de verificaciones realizadas para determina
 
 ### Observaciones
 
-En la ejecución realizada quedaron paquetes sin asignar porque requerían transporte refrigerado y los camiones que aún tenían capacidad disponible no eran refrigerados.
+En la ejecución realizada algunos paquetes quedaron sin asignar debido a restricciones de capacidad y compatibilidad con los camiones disponibles.
 
 Esto muestra que la estrategia Greedy obtiene una solución válida, aunque no siempre la mejor posible.

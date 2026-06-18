@@ -2,13 +2,13 @@ package persistencia;
 
 import modelo.Paquete;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class LectorDePaquetes {
     private static final String RUTA_ARCHIVOS = "src/persistencia/archivos/";
-    /**Controla que no haya códigos repetidos en el archivo con putIfAbsent y comprobando cantidadEsperada con cantidadCargados
+    /**
+     * Controla que no haya códigos repetidos en el archivo con putIfAbsent y comprobando cantidadEsperada con cantidadCargados
  */
     public HashMap<String, Paquete> cargar(String nombreArchivo) {
         String rutaCompleta = RUTA_ARCHIVOS + nombreArchivo;

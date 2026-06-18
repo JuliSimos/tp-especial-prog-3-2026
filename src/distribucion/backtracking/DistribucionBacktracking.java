@@ -29,7 +29,7 @@ public class DistribucionBacktracking {
         this.estados = 0;
 
         List<CargaDeCamion> cargaParcial = new ArrayList<>();
-        //inicializo la cargaParcial con los camiones en el orden de la lista, para luego solo modificar los paquetes que entrgan
+        //inicializo la cargaParcial con los camiones en el orden de la lista, para luego solo modificar los paquetes que entregan
         for (Camion c : this.camiones) {
             cargaParcial.add(new CargaDeCamion(c));
         }
@@ -92,12 +92,12 @@ public class DistribucionBacktracking {
 
                 //considerando el paquete
                 cargaActual.asignarPaquete(actual);
-                pesoSinAsignarActual = pesoSinAsignarActual - actual.getPeso();
+                pesoSinAsignarActual -= actual.getPeso();
 
                 buscarSolucion(indicePaquete + 1, cargaParcial, pesoSinAsignarActual);
 
                 cargaActual.quitarPaquete(actual);
-                pesoSinAsignarActual = pesoSinAsignarActual + actual.getPeso();
+                pesoSinAsignarActual += actual.getPeso();
             }
         }
 
@@ -125,6 +125,7 @@ public class DistribucionBacktracking {
         }
         return suma;
     }
+
     public double getCapacidadLibreTotal(List<CargaDeCamion> cargas) {
         double libre = 0;
         for (CargaDeCamion c : cargas) {

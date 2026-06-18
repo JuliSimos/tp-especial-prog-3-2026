@@ -32,7 +32,7 @@ public class CargaDeCamion {
     public List<Paquete> getPaquetes() {
         return new ArrayList<>(paquetes);
     }
-//No restrige el ingreso del paquete aunque podria, por ahora se frena x afuera
+    //No restrige el ingreso del paquete aunque podria, por ahora se frena por afuera
     public void asignarPaquete(Paquete p) {
         this.paquetes.add(p);
         this.pesoActual += p.getPeso();
