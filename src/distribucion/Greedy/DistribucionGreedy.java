@@ -73,12 +73,6 @@ public class DistribucionGreedy {
 
             if (!asignado) {
                 pesoNoAsignado += actual.getPeso();
-                System.out.println(
-                        "No asignado: " +
-                                actual.getCodigo() +
-                                " - " +
-                                actual.getPeso() + " kg"
-                );
             }
         }
 
