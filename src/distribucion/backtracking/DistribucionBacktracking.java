@@ -125,14 +125,6 @@ public class DistribucionBacktracking {
         }
         return suma;
     }
-
-    public double getCapacidadLibreTotal(List<CargaDeCamion> cargas) {
-        double libre = 0;
-        for (CargaDeCamion c : cargas) {
-            libre += c.getCapacidadDisponible();
-        }
-        return libre;
-    }
 }
 
 
